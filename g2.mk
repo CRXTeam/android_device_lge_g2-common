@@ -68,14 +68,21 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml \
 	frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml
 
+ifeq ($(filter ls980 vs980,$(TARGET_DEVICE)),)
+  PRODUCT_COPY_FILES += \
+        frameworks/native/data/etc/android.hardware.telephony.cdma.xml:system/etc/permissions/android.hardware.telephony.cdma.xml
+else
+  PRODUCT_COPY_FILES += \
+        frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
+  PRODUCT_PROPERTY_OVERRIDES += \
+        telephony.lteOnGsmDevice=1 \
+        ro.telephony.default_network=9
+endif
 
 # GPS configuration
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/sec_config:system/etc/sec_config \
     $(LOCAL_PATH)/gps.conf:system/etc/gps.conf
-
-# IRSC
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/sec_config:system/etc/sec_config
 
 PRODUCT_PACKAGES += \
     charger_res_images \
@@ -88,7 +95,22 @@ PRODUCT_PACKAGES += \
     VisualizationWallpapers \
     librs_jni
 
-# NFC packages
+PRODUCT_PACKAGES += \
+    nfc_nci.g2 \
+    NfcNci
+
+ifeq ($(filter ls980,$(TARGET_DEVICE)),)
+  PRODUCT_PACKAGES += \
+      nfc.default \
+      libnfc \
+      libnfc_jni \
+      Nfc
+else
+  PRODUCT_PACKAGES += \
+      nfc_nci.g2 \
+      NfcNci
+endif
+
 PRODUCT_PACKAGES += \
     Tag \
     com.android.nfc_extras
