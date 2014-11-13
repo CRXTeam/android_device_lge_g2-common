@@ -110,6 +110,11 @@ static char * camera_fixup_getparams(int id, const char * settings)
     if (params.get(android::CameraParameters::KEY_RECORDING_HINT)) {
         videoMode = (!strcmp(params.get(android::CameraParameters::KEY_RECORDING_HINT), "true"));
     }
+    
+    // fix params here
+    if (id == 0) {
+       params.set(android::CameraParameters::KEY_PREVIEW_FRAME_RATE, "30");
+    }
 
     /* Set supported scene modes */
     if (!videoMode) {
